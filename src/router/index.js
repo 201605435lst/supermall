@@ -32,5 +32,6 @@ const routes=[
 //创建路由对象
 const router=new VueRouter({
     routes,
+    mode: 'history'
 })
 export default router
