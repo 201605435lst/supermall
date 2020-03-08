@@ -8,6 +8,7 @@
             @scroll='contentScroll'
             @pullingUp='loadMore'
             >
+            <!--  -->
       <home-swiper :banners="banners"/>
            <recommend-view :recommends="recommends"/>
           <feature-view/>
@@ -35,6 +36,7 @@ import FeatureView from './childComps/FeatureView'
 import GoodsList from 'components/content/goods/GoodsList'
 
 import { getHomeMultidata,getHomeGoods } from 'network/home'
+import {debounce} from 'common/utils'
 export default {
     name:'Home',
     components:{
@@ -65,7 +67,21 @@ export default {
       this.getHomeGoods('pop'),
       this.getHomeGoods('new'),
       this.getHomeGoods('sell')
+    /**
+     * 监听item中图片加载完成
+     */
+
     },
+    mounted(){
+        //   this.$bus.$on('itemImageLoad' ,() =>{
+        // this.$refs.scroll.refresh()
+        // console.log("-----------------------")
+      const refresh =debounce(this.$refs.scroll.refresh)
+      this.$bus.$on('itemImageLoad' ,() =>{
+        refresh()
+    })
+    },
+  
     computed:{
       showgoods(){
         return this.goods[this.currentType].list
@@ -75,6 +91,7 @@ export default {
       /**
        * 与事件有关的方法
        */
+    
       tabclick(index){
         switch(index){
           case 0:
@@ -96,7 +113,7 @@ export default {
       },
       loadMore(){
         this.getHomeGoods(this.currentType)
-        // this.$refs.scroll.scroll.refresh()
+        
       },
       /**
        * 与网络请求有关的方法
@@ -106,7 +123,7 @@ export default {
         getHomeGoods(type,page).then(res =>{
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page +=1
-          this.$refs.scroll.finishPullUp()
+           this.$refs.scroll.finishPullUp()
       })
       },
       /**
