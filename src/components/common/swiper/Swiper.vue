@@ -52,7 +52,7 @@
         this.handleDom();
         // 2. 开启定时器
         this.startTimer();
-      },300)
+      },400)
     },
     methods: {
       indicatorClick(index) {

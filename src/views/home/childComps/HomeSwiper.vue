@@ -3,7 +3,6 @@
     <swiper-item 
     v-for="item in banners" 
     :key="item.image"
-   
     >
      <img :src="item.image" alt=""  @load="imageLoad">
     </swiper-item>

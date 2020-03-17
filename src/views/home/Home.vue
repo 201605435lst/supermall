@@ -68,7 +68,8 @@ export default {
         currentType:'pop',
         isShowBackTop:false,
         tabOffSetTop:0,
-        isTabFixed:false
+        isTabFixed:false,
+        saveY: 0
       }
     },
     created(){
@@ -91,7 +92,14 @@ export default {
         refresh()
     })
     },
-  
+  activated(){
+     this.$refs.scroll.refresh()
+    this.$refs.scroll.scrollTo(0,this.saveY,0)
+   
+  },
+  deactivated(){
+    this.saveY =this.$refs.scroll.getscrollY()
+  },
     computed:{
       showgoods(){
         return this.goods[this.currentType].list
@@ -115,7 +123,7 @@ export default {
                 break
         }
         this.$refs.tabControl1.currentIndex =index;
-             this.$refs.tabControl2.currentIndex =index;
+        this.$refs.tabControl2.currentIndex =index;
       },
       backClick(){
           this.$refs.scroll.scrollTo(0,0,500)
