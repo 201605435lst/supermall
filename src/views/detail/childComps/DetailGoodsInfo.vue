@@ -1,5 +1,6 @@
 <template>
-  <div v-if="Object.keys(detailInfo).length !== 0" class="goods-info">
+<div>
+    <div v-if="Object.keys(detailInfo).length !== 0" class="goods-info">
     <div class="info-desc clear-fix">
       <div class="start">
       </div>
@@ -11,6 +12,7 @@
       <img v-for="(item, index) in detailInfo.detailImage[0].list" :key="index" :src="item" @load="imgLoad" alt="">
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -33,6 +35,7 @@
         if (++this.counter === this.imagesLength) {
           this.$emit('imageLoad');
         }
+        // this.$emit('imageLoad');
 	    }
     },
     watch: {

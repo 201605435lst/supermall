@@ -34,7 +34,6 @@
 import NavBar from 'components/common/navbar/NavBar'
 import TabControl from 'components/content/tabControl/TabControl'
 import Scroll from 'components/common/scroll/Scroll'
-import BackTop from 'components/content/backTop/BackTop'
 
 // 子组件
 import HomeSwiper from './childComps/HomeSwiper'
@@ -43,7 +42,9 @@ import FeatureView from './childComps/FeatureView'
 import GoodsList from 'components/content/goods/GoodsList'
 
 import { getHomeMultidata,getHomeGoods } from 'network/home'
-import {debounce} from 'common/utils'
+
+import {itemListenerMixin,backTopMixin} from 'common/mixin'
+
 export default {
     name:'Home',
     components:{
@@ -53,9 +54,9 @@ export default {
       FeatureView,
       TabControl,
       GoodsList,
-      Scroll,
-      BackTop
+      Scroll
     },
+    mixins:[itemListenerMixin,backTopMixin],
     data(){
       return {
         banners:[],
@@ -66,10 +67,10 @@ export default {
           'sell':{page:0,list:[]},
         },
         currentType:'pop',
-        isShowBackTop:false,
         tabOffSetTop:0,
         isTabFixed:false,
-        saveY: 0
+        saveY: 0,
+        // itemImgListener:null
       }
     },
     created(){
@@ -82,23 +83,28 @@ export default {
      */
 
     },
-    mounted(){
-      // 图片完成加载事件的监听
-        //   this.$bus.$on('itemImageLoad' ,() =>{
-        // this.$refs.scroll.refresh()
-        // console.log("-----------------------")
-      const refresh =debounce(this.$refs.scroll.refresh)
-      this.$bus.$on('itemImageLoad' ,() =>{
-        refresh()
-    })
-    },
+    // mounted(){
+    //   // 图片完成加载事件的监听
+    //     //   this.$bus.$on('itemImageLoad' ,() =>{
+    //     // this.$refs.scroll.refresh()
+    //     // console.log("-----------------------")
+    //   const refresh =debounce(this.$refs.scroll.refresh)
+    //   //对监听事件进行保存
+    //   this.itemImgListener =()=>{
+    //     refresh()
+    //   }
+    //   this.$bus.$on('itemImageLoad' ,this.itemImgListener)
+    // },
   activated(){
      this.$refs.scroll.refresh()
     this.$refs.scroll.scrollTo(0,this.saveY,0)
    
   },
   deactivated(){
+    //保存Y值
     this.saveY =this.$refs.scroll.getscrollY()
+    //2、取消全局事件的监听
+    this.$bus.$off('itemImageLoad',this.itemImgListener)
   },
     computed:{
       showgoods(){
@@ -125,12 +131,11 @@ export default {
         this.$refs.tabControl1.currentIndex =index;
         this.$refs.tabControl2.currentIndex =index;
       },
-      backClick(){
-          this.$refs.scroll.scrollTo(0,0,500)
-      },
+  
       contentScroll(position){
         // 判断BackTop是否显示
-          this.isShowBackTop= (-position.y) >1000
+          // this.isShowBackTop= (-position.y) >1000
+          this.listenShowBackTop(position)
         //决定tabcontrol是否吸顶(position:fixed)
             this.isTabFixed =(-position.y) >this.tabOffSetTop
       },

@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="shop-info">
     <div class="shop-top">
       <img :src="shop.logo">
@@ -33,6 +34,8 @@
       <div class="enter-shop">进店逛逛</div>
     </div>
   </div>
+</div>
+
 </template>
 
 <script>
