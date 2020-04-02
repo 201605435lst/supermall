@@ -11,8 +11,9 @@
      <goods-list ref="recommend" :goods="recommends"></goods-list>
  
     </scroll>
-       <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
-    <detail-bottom-bar @addCart="addCart"></detail-bottom-bar>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+    <detail-bottom-bar @addCart="addToCart"></detail-bottom-bar>
+    <!-- <toast :message="message" :show="show"></toast> -->
   </div>
 </template>
 
@@ -25,12 +26,16 @@
   import  DetailParamInfo   from "./childComps/DetailParamInfo"
   import DetailCommentInfo from "./childComps/DetailCommentInfo"
   import DetailBottomBar from "./childComps/DetailBottomBar"
+  // import Toast from 'components/common/toast/Toast'
 
   import Scroll from 'components/common/scroll/Scroll'
   import GoodsList from 'components/content/goods/GoodsList'
   import {getDetail, Goods,Shop,GoodsParam,getRecommend} from "network/detail";
   import {debounce} from 'common/utils'
   import {itemListenerMixin,backTopMixin} from 'common/mixin'
+  
+  import { mapActions } from 'vuex'
+
   export default {
     name: "Detail",
     components: {
@@ -43,7 +48,9 @@
       DetailCommentInfo,
       DetailBottomBar,
       GoodsList,
-      Scroll
+      Scroll,
+      // Toast
+      
     },
       mixins:[itemListenerMixin,backTopMixin],
     data() {
@@ -58,8 +65,10 @@
         recommends:[],
         themeTopsY:[],
         getThemTopY:null,
-        currentIndex:0
+        currentIndex:0,
           // itemImgListener:null
+        // message:'',
+        // show:false
       }
     },
     // updated(){
@@ -125,6 +134,7 @@
     this.$bus.$off('itemImageLoad',this.itemImgListener)
   },
     methods: {
+      ...mapActions(['addCart']),
       imageLoad() {
        this.newRefresh()
         this.getThemTopY()
@@ -153,7 +163,7 @@
         //是否显示回到底部
        this.listenShowBackTop(position)
       },
-      addCart(){
+      addToCart(){
         //获取购物车所需要的购物信息
         const product ={}
         product.image =this.topImages[0]
@@ -164,7 +174,19 @@
         //将商品添加到购物车中(mutations)
         // this.$store.commit("addCart",product)
         //在action中修改属性
-        this.$store.dispatch("addCart",product)
+        this.addCart(product).then( res =>{
+          // this.message=res
+          // this.show =true
+          // setTimeout(()=>{
+          //   this.message=''
+          //   this.show=false
+          // },3000)
+
+         this.$toast.show(res,3000) 
+        })
+        // this.$store.dispatch("addCart",product).then(res =>{
+        //   console.log(res);
+        // })
       }
     }
   }

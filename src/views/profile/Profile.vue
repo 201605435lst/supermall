@@ -128,9 +128,9 @@ export default {
 }
 </script>
 <style>
-  .wrapper{
+  /* .wrapper{
     height: 200px;
-    background-color: red;
+
     overflow: hidden;
-  }
+  } */
 </style>
